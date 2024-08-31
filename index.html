@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>쿼부장의 새롬관 1327 호실 예약 시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
         :root {
             --quokka-brown: #8B4513;
@@ -19,39 +20,34 @@
             background-color: #FFF8DC;
             color: var(--quokka-brown);
             line-height: 1.5;
+            max-width: 100%;
+            overflow-x: hidden;
         }
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            max-width: 100%;
+            padding: 20px 10px;
             text-align: center;
             position: relative;
         }
         h1, h2 {
             color: var(--quokka-brown);
-        }
-        h1 { 
-            font-size: 40px; 
-            margin-bottom: 20px;
-        }
-        h2 { 
-            font-size: 30px; 
+            font-size: 24px; /* 모바일에서도 적절한 크기 */
             margin-bottom: 20px;
         }
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 5px;
             background-color: var(--quokka-light-brown);
             border: 3px solid var(--quokka-brown);
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .day, .weekday {
             background-color: #FFFFFF;
-            padding: 10px;
-            min-height: 80px;
+            padding: 5px;
+            min-height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -123,7 +119,7 @@
             border: none;
             padding: 10px 20px;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -135,26 +131,26 @@
         }
         #reservation-form, #reservation-details {
             background-color: var(--quokka-light-brown);
-            padding: 30px;
-            border-radius: 20px;
-            margin-top: 40px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             text-align: left;
         }
         #booking-form label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
         }
         #booking-form input,
         #booking-form select {
-            width: calc(100% - 24px);
-            padding: 12px;
+            width: calc(100% - 20px);
+            padding: 10px;
             margin-bottom: 20px;
             border: 2px solid var(--quokka-brown);
             border-radius: 10px;
-            font-size: 16px;
+            font-size: 14px;
             background-color: #FFFFFF;
             font-family: 'Jua', sans-serif;
         }
@@ -165,35 +161,21 @@
         #reservation-list li {
             background-color: #FFFFFF;
             margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid var(--quokka-brown);
-        }
-        #fee-options, #stay-options {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .fee-option, .stay-option {
-            flex: 1;
-            margin: 0 5px;
             padding: 10px;
-            text-align: center;
-            background-color: #FFFFFF;
-            border: 2px solid var(--quokka-brown);
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border: 2px solid var(--quokka-brown);
+            position: relative;
         }
-        .fee-option:hover, .fee-option.selected,
-        .stay-option:hover, .stay-option.selected {
+        #reservation-list button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
             background-color: var(--quokka-pink);
-            color: var(--quokka-brown);
-        }
-        #booking-form button,
-        #reservation-details button {
-            width: 100%;
-            margin-top: 10px;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 5px;
         }
         #total-reservations {
             position: absolute;
@@ -203,9 +185,25 @@
             color: white;
             padding: 10px 20px;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            #calendar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .day, .weekday {
+                min-height: 50px;
+            }
+            h1, h2 {
+                font-size: 20px;
+            }
+            button {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -350,9 +348,22 @@
         function showReservationDetails(dateString) {
             reservationList.innerHTML = '';
             if (reservations[dateString] && reservations[dateString].length > 0) {
-                reservations[dateString].forEach(reservation => {
+                reservations[dateString].forEach((reservation, index) => {
                     const li = document.createElement('li');
                     li.textContent = `이름: ${reservation.name}, 시간: ${reservation.time}, 목적: ${reservation.purpose}, 입장료: ${reservation.fee}, 숙박: ${reservation.stay}`;
+                    
+                    // 삭제 버튼 추가
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = "삭제";
+                    deleteButton.onclick = () => {
+                        reservations[dateString].splice(index, 1);
+                        saveReservations();  // 삭제 후 저장
+                        showReservationDetails(dateString);
+                        updateTotalReservations();
+                        generateCalendar();
+                    };
+                    
+                    li.appendChild(deleteButton);
                     reservationList.appendChild(li);
                 });
             } else {
@@ -390,6 +401,13 @@
             localStorage.setItem('reservations', JSON.stringify(reservations));
         }
 
+        function loadReservations() {
+            const storedReservations = JSON.parse(localStorage.getItem('reservations'));
+            if (storedReservations) {
+                reservations = storedReservations;
+            }
+        }
+
         function updateTotalReservations() {
             let total = 0;
             for (let date in reservations) {
@@ -400,17 +418,11 @@
 
         prevMonthButton.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
-            if (currentDate < new Date(2024, 7, 1)) {
-                currentDate = new Date(2024, 7, 1);
-            }
             generateCalendar();
         });
 
         nextMonthButton.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
-            if (currentDate > new Date(2024, 11, 31)) {
-                currentDate = new Date(2024, 11, 1);
-            }
             generateCalendar();
         });
 
@@ -436,6 +448,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadReservations();  // 페이지 로드 시 저장된 데이터 불러오기
             generateCalendar();
             updateTotalReservations();
         });
